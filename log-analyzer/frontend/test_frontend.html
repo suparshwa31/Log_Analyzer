@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend-Backend Test</title>
+</head>
+<body>
+    <h1>Frontend-Backend Connection Test</h1>
+    
+    <div>
+        <h2>Test 1: Direct Backend Call</h2>
+        <button onclick="testDirectBackend()">Test Direct Backend</button>
+        <div id="direct-result"></div>
+    </div>
+    
+    <div>
+        <h2>Test 2: Proxy Backend Call</h2>
+        <button onclick="testProxyBackend()">Test Proxy Backend</button>
+        <div id="proxy-result"></div>
+    </div>
+    
+    <div>
+        <h2>Test 3: Health Check</h2>
+        <button onclick="testHealth()">Test Health Endpoint</button>
+        <div id="health-result"></div>
+    </div>
+
+    <script>
+        async function testDirectBackend() {
+            const resultDiv = document.getElementById('direct-result');
+            try {
+                const response = await fetch('http://localhost:5001/api/upload/files', {
+                    headers: {
+                        'Authorization': 'Bearer invalid-token'
+                    }
+                });
+                const data = await response.json();
+                resultDiv.innerHTML = `<p>Status: ${response.status}</p><p>Response: ${JSON.stringify(data)}</p>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function testProxyBackend() {
+            const resultDiv = document.getElementById('proxy-result');
+            try {
+                const response = await fetch('/api/upload/files', {
+                    headers: {
+                        'Authorization': 'Bearer invalid-token'
+                    }
+                });
+                const data = await response.json();
+                resultDiv.innerHTML = `<p>Status: ${response.status}</p><p>Response: ${JSON.stringify(data)}</p>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function testHealth() {
+            const resultDiv = document.getElementById('health-result');
+            try {
+                const response = await fetch('http://localhost:5001/health');
+                const data = await response.json();
+                resultDiv.innerHTML = `<p>Status: ${response.status}</p><p>Response: ${JSON.stringify(data)}</p>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
