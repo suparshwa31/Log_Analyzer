@@ -23,7 +23,7 @@ def create_app(config_class=Config):
     app.config['OPENAI_API_KEY'] = config.OPENAI_API_KEY
     
     # Enable CORS for frontend communication
-    CORS(app, origins=['https://log-analyzer-git-main-suparshwa31s-projects.vercel.app', 'https://log-analyzer-pcj9imnvu-suparshwa31s-projects.vercel.app'], supports_credentials=True)
+    CORS(app, origins=['https://log-analyzer-sepia.vercel.app', 'https://log-analyzer-suparshwa31s-projects.vercel.app', 'https://log-analyzer-git-main-suparshwa31s-projects.vercel.app'], supports_credentials=True)
     
     # Register blueprints
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
