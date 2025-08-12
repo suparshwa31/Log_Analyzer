@@ -45,7 +45,7 @@ function App() {
         <Routes>
           <Route 
             path="/login" 
-            element={user ? <Navigate to="/upload" replace /> : <Login />} 
+            element={user ? <Navigate to="/results" replace /> : <Login />} 
           />
           <Route 
             path="/upload" 
@@ -57,7 +57,7 @@ function App() {
           />
           <Route 
             path="/" 
-            element={<Navigate to={user ? "/upload" : "/login"} replace />} 
+            element={<Navigate to={user ? "/results" : "/login"} replace />} 
           />
         </Routes>
       </div>

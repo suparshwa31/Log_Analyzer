@@ -116,7 +116,7 @@ export const uploadAPI = {
 export const analysisAPI = {
   analyzeLogs: async (filePath: string): Promise<AnalysisResult> => {
     const response = await api.post('/analysis/analyze', { file_path: filePath }, {
-      timeout: 600000, // 10 minutes for log analysis
+      timeout: 120000, // 2 minutes for log analysis
       onUploadProgress: (progressEvent) => {
         console.log('Analysis request progress:', progressEvent)
       },

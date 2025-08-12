@@ -1,0 +1,25 @@
+2024-08-11 18:35:01 INFO [UserService] User login successful for user123
+2024-08-11 18:35:02 INFO [AuthService] JWT token generated for user123
+2024-08-11 18:35:15 WARNING [DatabaseService] Connection pool approaching maximum capacity (85%)
+2024-08-11 18:35:20 ERROR [PaymentService] Payment processing failed for transaction TX123456 - Gateway timeout
+2024-08-11 18:35:21 ERROR [PaymentService] Retry attempt 1 failed for transaction TX123456
+2024-08-11 18:35:25 INFO [UserService] User logout for user456
+2024-08-11 18:35:30 CRITICAL [SecurityService] Multiple failed login attempts detected for IP 192.168.1.100
+2024-08-11 18:35:31 ERROR [SecurityService] Rate limiting activated for IP 192.168.1.100
+2024-08-11 18:35:35 WARNING [CacheService] Cache miss rate elevated: 15% (threshold: 10%)
+2024-08-11 18:35:40 INFO [NotificationService] Email notification sent to user789@example.com
+2024-08-11 18:35:45 ERROR [ApiService] HTTP 500 error in /api/users/profile endpoint
+2024-08-11 18:35:46 ERROR [ApiService] Database connection timeout in user profile query
+2024-08-11 18:35:50 WARNING [MemoryService] Memory usage at 78% capacity
+2024-08-11 18:35:55 INFO [BackupService] Automated backup completed successfully
+2024-08-11 18:36:00 FATAL [SystemService] Critical system resource exhaustion detected
+2024-08-11 18:36:01 ERROR [SystemService] Unable to allocate memory for new processes
+2024-08-11 18:36:05 WARNING [NetworkService] High network latency detected: 250ms average
+2024-08-11 18:36:10 INFO [HealthService] System health check completed - 3 issues detected
+2024-08-11 18:36:15 ERROR [DatabaseService] Connection pool exhausted - all 50 connections in use
+2024-08-11 18:36:20 WARNING [LoadBalancer] Server node-03 marked as unhealthy due to timeout
+2024-08-11 18:36:25 INFO [UserService] Password reset requested for user999@example.com
+2024-08-11 18:36:30 ERROR [EmailService] SMTP connection failed - unable to send password reset email
+2024-08-11 18:36:35 WARNING [QueueService] Message queue backlog reaching 1000 messages
+2024-08-11 18:36:40 INFO [ConfigService] Configuration reload completed
+2024-08-11 18:36:45 CRITICAL [SecurityService] Suspicious activity pattern detected - possible DDoS attack

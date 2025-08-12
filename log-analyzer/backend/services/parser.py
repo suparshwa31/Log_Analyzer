@@ -18,9 +18,10 @@ class LogParser:
             'level': re.compile(r'(ERROR|WARN|WARNING|INFO|DEBUG|CRITICAL|FATAL)', re.IGNORECASE)
         }
     
-    def parse_file(self, file_path: str) -> List[Dict[str, Any]]:
-        """Parse a log file and return structured data"""
+    def parse_file(self, file_path: str, max_lines: int = 10000, sample_rate: float = 1.0) -> List[Dict[str, Any]]:
+        """Parse a log file and return structured data with optional sampling for performance"""
         parsed_logs = []
+        lines_processed = 0
         
         try:
             # Check if this is a Supabase storage path
@@ -33,7 +34,23 @@ class LogParser:
                 
                 # Parse content as text
                 lines = file_content.decode('utf-8', errors='ignore').split('\n')
+                total_lines = len(lines)
+                
+                # Apply sampling for large files only if sample_rate < 1.0
+                if sample_rate < 1.0 and total_lines > max_lines:
+                    import random
+                    # Sample lines randomly
+                    sampled_indices = sorted(random.sample(range(total_lines), int(total_lines * sample_rate)))
+                    lines = [lines[i] for i in sampled_indices]
+                    print(f"Sampled {len(lines)} lines from {total_lines} total lines")
+                else:
+                    print(f"Processing all {total_lines} lines from file")
+                
                 for line_num, line in enumerate(lines, 1):
+                    if lines_processed >= max_lines:
+                        print(f"Reached max_lines limit of {max_lines}, stopping parsing")
+                        break
+                        
                     line = line.strip()
                     if not line:
                         continue
@@ -41,21 +58,34 @@ class LogParser:
                     parsed_entry = self.parse_line(line, line_num)
                     if parsed_entry:
                         parsed_logs.append(parsed_entry)
+                        lines_processed += 1
             else:
                 # Local file
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as file:
                     for line_num, line in enumerate(file, 1):
+                        if lines_processed >= max_lines:
+                            print(f"Reached max_lines limit of {max_lines}, stopping parsing")
+                            break
+                            
                         line = line.strip()
                         if not line:
                             continue
                         
+                        # Apply sampling only if sample_rate < 1.0
+                        if sample_rate < 1.0:
+                            import random
+                            if random.random() > sample_rate:
+                                continue
+                        
                         parsed_entry = self.parse_line(line, line_num)
                         if parsed_entry:
                             parsed_logs.append(parsed_entry)
+                            lines_processed += 1
                         
         except Exception as e:
             raise Exception(f"Error parsing file {file_path}: {str(e)}")
         
+        print(f"Parsed {len(parsed_logs)} log entries")
         return parsed_logs
     
     def parse_line(self, line: str, line_num: int) -> Dict[str, Any]:

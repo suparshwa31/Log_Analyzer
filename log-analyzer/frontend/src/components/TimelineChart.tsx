@@ -128,101 +128,104 @@ export default function TimelineChart({ data }: TimelineChartProps) {
   }
 
   return (
-    <div className="w-full h-80">
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          data={chartData}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-          <XAxis 
-            dataKey="time" 
-            stroke="#6b7280"
-            fontSize={12}
-            tickLine={false}
-            axisLine={false}
-          />
-          <YAxis 
-            stroke="#6b7280"
-            fontSize={12}
-            tickLine={false}
-            axisLine={false}
-            tickFormatter={(value) => value.toLocaleString()}
-          />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend 
-            verticalAlign="top" 
-            height={36}
-            wrapperStyle={{
-              paddingBottom: '10px'
-            }}
-          />
-          <Line
-            type="monotone"
-            dataKey="total"
-            stroke="#3b82f6"
-            strokeWidth={2}
-            dot={false}
-            name="Total Logs"
-          />
-          <Line
-            type="monotone"
-            dataKey="errors"
-            stroke="#ef4444"
-            strokeWidth={2}
-            dot={false}
-            name="Errors"
-          />
-          <Line
-            type="monotone"
-            dataKey="warnings"
-            stroke="#f59e0b"
-            strokeWidth={2}
-            dot={false}
-            name="Warnings"
-          />
-          <Line
-            type="monotone"
-            dataKey="info"
-            stroke="#10b981"
-            strokeWidth={2}
-            dot={false}
-            name="Info"
-          />
-        </LineChart>
-      </ResponsiveContainer>
-      
-      {/* Chart Summary */}
-      <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-        <div>
-          <p className="text-sm font-medium text-gray-500">Peak Volume</p>
-          <p className="text-lg font-semibold text-gray-900">
+    <div className="w-full">
+      {/* Chart Summary Metrics */}
+      <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-gray-50 rounded-lg p-4 text-center">
+          <p className="text-sm font-medium text-gray-500 mb-1">Peak Volume</p>
+          <p className="text-xl font-semibold text-blue-600">
             {Math.max(...chartData.map(d => d.total)).toLocaleString()}
           </p>
         </div>
-        <div>
-          <p className="text-sm font-medium text-gray-500">Avg Volume</p>
-          <p className="text-lg font-semibold text-gray-900">
+        <div className="bg-gray-50 rounded-lg p-4 text-center">
+          <p className="text-sm font-medium text-gray-500 mb-1">Avg Volume</p>
+          <p className="text-xl font-semibold text-gray-600">
             {Math.round(chartData.reduce((sum, d) => sum + d.total, 0) / chartData.length).toLocaleString()}
           </p>
         </div>
-        <div>
-          <p className="text-sm font-medium text-gray-500">Total Errors</p>
-          <p className="text-lg font-semibold text-red-600">
+        <div className="bg-gray-50 rounded-lg p-4 text-center">
+          <p className="text-sm font-medium text-gray-500 mb-1">Total Errors</p>
+          <p className="text-xl font-semibold text-red-600">
             {chartData.reduce((sum, d) => sum + d.errors, 0).toLocaleString()}
           </p>
         </div>
-        <div>
-          <p className="text-sm font-medium text-gray-500">Total Warnings</p>
-          <p className="text-lg font-semibold text-yellow-600">
+        <div className="bg-gray-50 rounded-lg p-4 text-center">
+          <p className="text-sm font-medium text-gray-500 mb-1">Total Warnings</p>
+          <p className="text-xl font-semibold text-yellow-600">
             {chartData.reduce((sum, d) => sum + d.warnings, 0).toLocaleString()}
           </p>
         </div>
+      </div>
+      
+      {/* Timeline Chart */}
+      <div className="w-full h-80">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={chartData}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <XAxis 
+              dataKey="time" 
+              stroke="#6b7280"
+              fontSize={12}
+              tickLine={false}
+              axisLine={false}
+            />
+            <YAxis 
+              stroke="#6b7280"
+              fontSize={12}
+              tickLine={false}
+              axisLine={false}
+              tickFormatter={(value) => value.toLocaleString()}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend 
+              verticalAlign="top" 
+              height={36}
+              wrapperStyle={{
+                paddingBottom: '10px'
+              }}
+            />
+            <Line
+              type="monotone"
+              dataKey="total"
+              stroke="#3b82f6"
+              strokeWidth={2}
+              dot={false}
+              name="Total Logs"
+            />
+            <Line
+              type="monotone"
+              dataKey="errors"
+              stroke="#ef4444"
+              strokeWidth={2}
+              dot={false}
+              name="Errors"
+            />
+            <Line
+              type="monotone"
+              dataKey="warnings"
+              stroke="#f59e0b"
+              strokeWidth={2}
+              dot={false}
+              name="Warnings"
+            />
+            <Line
+              type="monotone"
+              dataKey="info"
+              stroke="#10b981"
+              strokeWidth={2}
+              dot={false}
+              name="Info"
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
     </div>
   )

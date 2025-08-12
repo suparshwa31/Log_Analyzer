@@ -25,13 +25,16 @@ def analyze_logs():
         
         validated_request = AnalysisRequest(**request_data)
         
-        # Parse the log file
+        # Parse the log file with performance optimizations
         parser = LogParser()
-        parsed_logs = parser.parse_file(validated_request.file_path)
+        # Process all lines without sampling
+        parsed_logs = parser.parse_file(validated_request.file_path, max_lines=20000, sample_rate=1.0)
         
+        print(f"Starting anomaly detection on {len(parsed_logs)} parsed logs")
         # Detect anomalies
         detector = AnomalyDetector()
         anomalies = detector.detect_anomalies(parsed_logs)
+        print(f"Found {len(anomalies)} anomalies")
         
         # Generate AI summary if available
         ai_summary = None
@@ -39,63 +42,71 @@ def analyze_logs():
             ai_helper = AIHelper()
             ai_summary = ai_helper.generate_summary(parsed_logs, anomalies)
         
-        # Generate timeline data for visualization
+        print("Generating timeline data...")
+        # Generate timeline data for visualization (optimized)
         timeline_data = {}
         from datetime import datetime
+        from collections import defaultdict
         
-        for i, log in enumerate(parsed_logs):
+        # Use defaultdict for better performance
+        hourly_stats = defaultdict(lambda: {'total': 0, 'errors': 0, 'warnings': 0, 'info': 0})
+        
+        for log in parsed_logs:
             timestamp = log.get('timestamp')
-            
-            if timestamp:
-                try:
-                    # Parse the timestamp to get the hour key
-                    if isinstance(timestamp, str):
-                        # Try to parse ISO format first
-                        dt = None
+            if not timestamp:
+                continue
+                
+            try:
+                # Simplified timestamp parsing for performance
+                if isinstance(timestamp, str):
+                    dt = None
+                    # Try most common format first
+                    try:
+                        dt = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
+                    except (ValueError, AttributeError):
                         try:
-                            dt = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
-                        except (ValueError, AttributeError) as e:
-                            # Try common formats
-                            for fmt in ['%Y-%m-%d %H:%M:%S', '%Y-%m-%dT%H:%M:%S']:
-                                try:
-                                    dt = datetime.strptime(timestamp, fmt)
-                                    break
-                                except ValueError as e2:
-                                    continue
-                            else:
-                                continue  # Skip if we can't parse the timestamp
+                            dt = datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')
+                        except ValueError:
+                            continue  # Skip unparseable timestamps
+                    
+                    if dt:
+                        hour_key = dt.strftime('%Y-%m-%d %H:00:00')
+                        hourly_stats[hour_key]['total'] += 1
                         
-                        if dt:
-                            # Round to hour for grouping
-                            hour_key = dt.strftime('%Y-%m-%d %H:00:00')
+                        level = log.get('level', 'INFO').upper()
+                        if level in ['ERROR', 'CRITICAL', 'FATAL']:
+                            hourly_stats[hour_key]['errors'] += 1
+                        elif level in ['WARNING', 'WARN']:
+                            hourly_stats[hour_key]['warnings'] += 1
+                        else:
+                            hourly_stats[hour_key]['info'] += 1
                             
-                            if hour_key not in timeline_data:
-                                timeline_data[hour_key] = {
-                                    'total': 0,
-                                    'errors': 0,
-                                    'warnings': 0,
-                                    'info': 0
-                                }
-                            
-                            timeline_data[hour_key]['total'] += 1
-                            level = log.get('level', 'INFO').upper()
-                            
-                            if level in ['ERROR', 'CRITICAL', 'FATAL']:
-                                timeline_data[hour_key]['errors'] += 1
-                            elif level in ['WARNING', 'WARN']:
-                                timeline_data[hour_key]['warnings'] += 1
-                            else:
-                                timeline_data[hour_key]['info'] += 1
-                            
-                except Exception as e:
-                    continue
+            except Exception:
+                continue
+        
+        # Convert defaultdict to regular dict
+        timeline_data = dict(hourly_stats)
         
         
-        # Prepare analysis results
+        print("Calculating statistics...")
+        # Prepare analysis results (optimized to avoid multiple list comprehensions)
+        error_count = 0
+        warning_count = 0
+        info_count = 0
+        
+        for log in parsed_logs:
+            level = log.get('level', '').upper()
+            if level in ['ERROR', 'CRITICAL', 'FATAL']:
+                error_count += 1
+            elif level in ['WARNING', 'WARN']:
+                warning_count += 1
+            else:
+                info_count += 1
+        
         statistics = StatisticsResponse(
-            error_count=len([log for log in parsed_logs if log.get('level', '').upper() in ['ERROR', 'CRITICAL', 'FATAL']]),
-            warning_count=len([log for log in parsed_logs if log.get('level', '').upper() in ['WARNING', 'WARN']]),
-            info_count=len([log for log in parsed_logs if log.get('level', '').upper() in ['INFO', 'DEBUG']]) if len([log for log in parsed_logs if log.get('level', '').upper() in ['INFO', 'DEBUG']]) > 0 else len(parsed_logs) - len([log for log in parsed_logs if log.get('level', '').upper() in ['ERROR', 'CRITICAL', 'FATAL', 'WARNING', 'WARN']])
+            error_count=error_count,
+            warning_count=warning_count,
+            info_count=info_count
         )
         
         # Convert anomalies to Pydantic models

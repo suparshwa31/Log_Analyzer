@@ -12,6 +12,8 @@ class AIHelper:
         
         if self.enabled:
             openai.api_key = self.openai_api_key
+        else:
+            pass
     
     def generate_summary(self, logs: List[Dict[str, Any]], anomalies: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
         """Generate AI-powered summary of log analysis"""
@@ -96,7 +98,8 @@ class AIHelper:
                     }
                 ],
                 max_tokens=500,
-                temperature=0.3
+                temperature=0.3,
+                request_timeout=120.0  # 2 minute timeout
             )
             
             return response.choices[0].message.content.strip()
