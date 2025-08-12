@@ -10,12 +10,12 @@ if __name__ == '__main__':
     # Set environment variables
     os.environ['FLASK_ENV'] = 'development'
     os.environ['DEBUG'] = 'true'
-    os.environ['PORT'] = '5001'
+    os.environ['PORT'] = '5000'
     
     # Create and run the app
     app = create_app()
     app.run(
         debug=True,
         host='0.0.0.0',
-        port=5001
+        port=5000
     )

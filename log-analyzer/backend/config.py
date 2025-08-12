@@ -26,7 +26,7 @@ class Config(BaseSettings):
     
     # Development Configuration
     host: str = Field(default='0.0.0.0', alias='HOST')
-    port: int = Field(default=5001, alias='PORT')
+    port: int = Field(default=5000, alias='PORT')
     
     @validator('max_content_length', 'max_log_size')
     def validate_positive_size(cls, v):
