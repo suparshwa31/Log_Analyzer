@@ -34,7 +34,6 @@ class AIHelper:
             }
             
         except Exception as e:
-            print(f"AI summary generation failed: {str(e)}")
             # Fallback to basic summary if AI fails
             return self._generate_basic_summary(logs, anomalies)
     
@@ -105,7 +104,6 @@ class AIHelper:
             return response.choices[0].message.content.strip()
             
         except Exception as e:
-            print(f"OpenAI API call failed: {str(e)}")
             # Fallback to basic summary
             return f"""
             Based on the log analysis, here are the key findings:

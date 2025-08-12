@@ -30,11 +30,9 @@ def analyze_logs():
         # Process all lines without sampling
         parsed_logs = parser.parse_file(validated_request.file_path, max_lines=20000, sample_rate=1.0)
         
-        print(f"Starting anomaly detection on {len(parsed_logs)} parsed logs")
         # Detect anomalies
         detector = AnomalyDetector()
         anomalies = detector.detect_anomalies(parsed_logs)
-        print(f"Found {len(anomalies)} anomalies")
         
         # Generate AI summary if available
         ai_summary = None
@@ -42,7 +40,6 @@ def analyze_logs():
             ai_helper = AIHelper()
             ai_summary = ai_helper.generate_summary(parsed_logs, anomalies)
         
-        print("Generating timeline data...")
         # Generate timeline data for visualization (optimized)
         timeline_data = {}
         from datetime import datetime
@@ -88,7 +85,6 @@ def analyze_logs():
         timeline_data = dict(hourly_stats)
         
         
-        print("Calculating statistics...")
         # Prepare analysis results (optimized to avoid multiple list comprehensions)
         error_count = 0
         warning_count = 0

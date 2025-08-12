@@ -21,17 +21,9 @@ class AnomalyDetector:
         if not logs:
             return []
         
-        print(f"Starting anomaly detection on {len(logs)} logs")
         anomalies = []
         
         # Only run the most important and fast anomaly detections
-        # print("Detecting error patterns...")
-        # anomalies.extend(self._detect_error_patterns_fast(logs))
-        # print(f"Found {len(anomalies)} error pattern anomalies")
-        
-        # print("Detecting high frequency anomalies...")
-        # anomalies.extend(self._detect_frequency_anomalies_fast(logs))
-        # print(f"Total anomalies so far: {len(anomalies)}")
         
         # Skip time-intensive anomaly detections for speed
         anomalies.extend(self._detect_error_spikes(logs))
@@ -39,7 +31,6 @@ class AnomalyDetector:
         anomalies.extend(self._detect_ip_anomalies(logs))
         anomalies.extend(self._detect_status_anomalies(logs))
         
-        print(f"Anomaly detection completed. Found {len(anomalies)} total anomalies")
         return anomalies
     
     def _detect_error_spikes(self, logs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:

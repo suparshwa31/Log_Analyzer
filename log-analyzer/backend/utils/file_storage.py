@@ -197,13 +197,11 @@ class FileStorageManager:
                         'path': f"supabase://{bucket_name}/{user_id}/{file_info['name']}"
                     })
                 except Exception as e:
-                    print(f"Error processing Supabase file {file_info.get('name', 'unknown')}: {e}")
                     continue
             
             return files
             
         except Exception as e:
-            print(f"Supabase list failed: {e}")
             return []
 
 # Global instance

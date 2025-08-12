@@ -42,13 +42,9 @@ class LogParser:
                     # Sample lines randomly
                     sampled_indices = sorted(random.sample(range(total_lines), int(total_lines * sample_rate)))
                     lines = [lines[i] for i in sampled_indices]
-                    print(f"Sampled {len(lines)} lines from {total_lines} total lines")
-                else:
-                    print(f"Processing all {total_lines} lines from file")
                 
                 for line_num, line in enumerate(lines, 1):
                     if lines_processed >= max_lines:
-                        print(f"Reached max_lines limit of {max_lines}, stopping parsing")
                         break
                         
                     line = line.strip()
@@ -64,7 +60,6 @@ class LogParser:
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as file:
                     for line_num, line in enumerate(file, 1):
                         if lines_processed >= max_lines:
-                            print(f"Reached max_lines limit of {max_lines}, stopping parsing")
                             break
                             
                         line = line.strip()
@@ -85,7 +80,6 @@ class LogParser:
         except Exception as e:
             raise Exception(f"Error parsing file {file_path}: {str(e)}")
         
-        print(f"Parsed {len(parsed_logs)} log entries")
         return parsed_logs
     
     def parse_line(self, line: str, line_num: int) -> Dict[str, Any]:

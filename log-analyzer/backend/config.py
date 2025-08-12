@@ -14,7 +14,7 @@ class Config(BaseSettings):
     supabase_bucket: str = Field(..., alias='SUPABASE_BUCKET')
     
     # File Upload Configuration
-    max_content_length: int = Field(default=100 * 1024 * 1024, alias='MAX_CONTENT_LENGTH')  # 100MB
+    max_content_length: int = Field(default=50 * 1024 * 1024, alias='MAX_CONTENT_LENGTH')  # 50MB
     upload_folder: str = Field(default='uploads', alias='UPLOAD_FOLDER')
     allowed_extensions: List[str] = Field(default=['log', 'txt', 'gz', 'tar'], alias='ALLOWED_EXTENSIONS')
     

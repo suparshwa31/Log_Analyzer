@@ -19,11 +19,7 @@ interface TimelineChartProps {
 export default function TimelineChart({ data }: TimelineChartProps) {
   // Generate timeline data from real log entries
   const generateTimelineData = () => {
-    console.log('TimelineChart data:', data)
-    console.log('parseResult:', data.parseResult)
-    
     if (!data.parseResult || data.parseResult.length === 0) {
-      console.log('No parseResult data available')
       // Generate sample data for demonstration
       const sampleData = []
       const now = new Date()

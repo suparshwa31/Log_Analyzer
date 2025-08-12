@@ -15,6 +15,7 @@ export default function Results() {
   const [uploadedFiles, setUploadedFiles] = useState<FileInfo[]>([])
   const [analyzing, setAnalyzing] = useState(false)
   const [selectedFile, setSelectedFile] = useState<string>('')
+  const [fileSelectionError, setFileSelectionError] = useState('')
   const [currentParseResult, setCurrentParseResult] = useState<LogEntry[]>([])
   const [resolvedAnomalies, setResolvedAnomalies] = useState<Array<{
     type: string
@@ -74,7 +75,6 @@ export default function Results() {
           setError('No log files found. Please upload a file first.')
         }
       } catch (err: any) {
-        console.error('Error loading files:', err)
         if (err.response?.status === 401) {
           navigate('/login')
         } else {
@@ -94,17 +94,13 @@ export default function Results() {
       setError('')
       setAnalysisResult(null) // Reset analysis result while analyzing
       
-      console.log('Starting analysis for file:', fileInfo.filename)
       const filePath = fileInfo.path || `/uploads/${fileInfo.filename}`
       const analysisData = await analysisAPI.analyzeLogs(filePath)
-      
-      console.log('Analysis completed successfully:', analysisData)
       setAnalysisResult(analysisData)
       setCurrentParseResult([]) // Reset parse result since we're using analysis from API
       setResolvedAnomalies([]) // Clear resolved anomalies for new file
       
     } catch (err: any) {
-      console.error('Error analyzing file:', err)
       
       // Handle different types of errors
       let errorMessage = 'Unknown error occurred'
@@ -125,7 +121,6 @@ export default function Results() {
       setAnalysisResult(null) // Ensure analysis result is null on error
     } finally {
       setAnalyzing(false)
-      console.log('Analysis process completed')
     }
   }
 
@@ -142,7 +137,20 @@ export default function Results() {
   }
 
   const handleFileSelection = (filename: string) => {
-    if (!filename || filename === selectedFile) return
+    // Clear any previous file selection errors
+    setFileSelectionError('')
+    setError('')
+    
+    // If user selects empty option, show error
+    if (!filename) {
+      setFileSelectionError('Please select a log file to analyze.')
+      setSelectedFile('')
+      setAnalysisResult(null)
+      return
+    }
+    
+    // If same file is selected again, no need to re-analyze
+    if (filename === selectedFile) return
     
     setSelectedFile(filename)
     analyzeFile(filename)
@@ -292,7 +300,11 @@ export default function Results() {
                 <select
                   value={selectedFile}
                   onChange={(e) => handleFileSelection(e.target.value)}
-                  className="block w-64 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className={`block w-64 px-3 py-2 border rounded-md shadow-sm focus:outline-none ${
+                    fileSelectionError 
+                      ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                      : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+                  }`}
                   disabled={analyzing}
                 >
                   <option value="">Select a log file...</option>
@@ -317,6 +329,14 @@ export default function Results() {
                 </button>
               </div>
             </div>
+            
+            {/* File Selection Error Display */}
+            {fileSelectionError && (
+              <div className="mt-4 flex items-center space-x-2 text-red-600">
+                <AlertTriangle className="h-4 w-4" />
+                <span className="text-sm font-medium">{fileSelectionError}</span>
+              </div>
+            )}
           </div>
 
           {analyzing ? (
@@ -325,9 +345,31 @@ export default function Results() {
               <h3 className="text-lg font-medium text-gray-900 mb-2">Analyzing Log File</h3>
               <p className="text-gray-600">Please wait while we analyze your log file...</p>
             </div>
+          ) : fileSelectionError ? (
+            <div className="bg-white shadow rounded-lg p-6 text-center">
+              <AlertTriangle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Please Select a Log File</h3>
+              <p className="text-gray-600 mb-4">Choose a log file from the dropdown above to view analysis results.</p>
+              <button
+                onClick={() => {
+                  setFileSelectionError('')
+                  if (uploadedFiles.length > 0) {
+                    handleFileSelection(uploadedFiles[0].filename)
+                  }
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 mr-2"
+              >
+                {uploadedFiles.length > 0 ? 'Analyze First File' : 'No Files Available'}
+              </button>
+              <button
+                onClick={() => navigate('/upload')}
+                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+              >
+                Upload New File
+              </button>
+            </div>
           ) : analysisResult && analysisResult.total_entries !== undefined && analysisResult.statistics ? (
             <>
-              {console.log('Rendering analysis result:', analysisResult)}
               {/* Summary Statistics */}
               <div className="bg-white shadow rounded-lg">
                 <div className="px-4 py-5 sm:p-6">

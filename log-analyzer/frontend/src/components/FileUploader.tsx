@@ -158,7 +158,7 @@ export default function FileUploader({ onFileUpload }: FileUploaderProps) {
 
       {/* File Type Info */}
       <div className="text-xs text-gray-500">
-        Supported file types: .log, .txt, .gz, .tar (Max size: 100MB per file)
+        Supported file types: .log, .txt, .gz, .tar (Max size: 50MB per file)
       </div>
     </div>
   )
