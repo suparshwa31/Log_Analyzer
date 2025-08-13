@@ -121,8 +121,8 @@ The application can be configured through environment variables:
 
 ## AI Usage
 
-the Analysis summary feature uses OpenAI API to generate a intelligent summaries, key insights, and actionable recommendations based on log analysis data. i am using openai-gpt-3.5-turbo model for this task.
-if openai fails to generate a summary the application will continue to process othe analysis features with a fallback summary generated using keywords based analysis.
+the Analysis summary feature leverages the OpenAI GPT-3.5-Turbo model to produce intelligent summaries, highlight key insights, and provide actionable recommendations based on log analysis data.
+If the OpenAI API request fails, the system gracefully falls back to a keyword-based analysis method, ensuring that summaries are still generated and other analysis features continue to function without interruption.
 ## Contributing
 
 1. Fork the repository
